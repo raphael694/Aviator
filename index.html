@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pred by Rapha - Pro V7.5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #020617; color: white; font-family: 'Segoe UI', sans-serif; }
+        .glow-text { text-shadow: 0 0 20px rgba(34, 211, 238, 0.8); }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .digital-clock { font-family: 'Courier New', Courier, monospace; letter-spacing: 2px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div id="login-screen" class="bg-[#1e293b] p-8 rounded-[2.5rem] border border-slate-700 shadow-2xl w-full max-w-sm transition-all duration-500">
+        <div class="text-center mb-6">
+            <div class="bg-cyan-500/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="text-cyan-500" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h2 class="text-xl font-bold">Accès Privé</h2>
+        </div>
+        
+        <input type="password" id="pass-input" class="w-full bg-slate-900 border-2 border-slate-800 rounded-2xl p-4 text-white text-center text-xl outline-none focus:border-cyan-500 mb-4 transition-all" placeholder="••••••••">
+        <button onclick="checkPass()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95">
+            SE CONNECTER
+        </button>
+        <p id="error-msg" class="text-red-400 text-xs text-center mt-4 hidden">Tsy marina ny teny miafina!</p>
+    </div>
+
+    <div id="main-app" class="hidden bg-[#1a1f2c] w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl border border-slate-800 relative overflow-hidden">
+        
+        <div class="flex justify-between items-center mb-8 bg-slate-900/50 p-4 rounded-2xl border border-slate-800/50">
+            <div class="flex flex-col">
+                <span class="text-[10px] text-cyan-500 font-black uppercase tracking-widest">Temps Réel</span>
+                <div id="live-clock" class="text-xl font-bold digital-clock text-white">00:00:00</div>
+            </div>
+            <button onclick="location.reload()" class="bg-slate-800 p-2 rounded-lg text-slate-400 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+            </button>
+        </div>
+
+        <div class="space-y-8">
+            <div class="text-center">
+                <label class="text-slate-500 text-xs font-bold block mb-3 tracking-widest uppercase">🕒 Heure de Départ</label>
+                <input type="time" id="start-time" step="1" oninput="calculate()" class="w-full bg-[#12151c] text-white text-4xl text-center py-5 rounded-3xl border border-slate-800 outline-none focus:border-cyan-500/50 font-mono">
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+                <div class="text-center">
+                    <label class="text-slate-600 text-[9px] font-bold block mb-2 uppercase">Champ 1</label>
+                    <input type="number" id="c1" value="5" oninput="calculate()" class="w-full bg-slate-800/40 text-white py-3 rounded-xl text-center border border-slate-800 outline-none text-lg font-bold">
+                </div>
+                <div class="text-center">
+                    <label class="text-slate-600 text-[9px] font-bold block mb-2 uppercase text-cyan-500">Sec (C2)</label>
+                    <input type="number" id="c2" value="06" oninput="calculate()" class="w-full bg-slate-800/40 text-white py-3 rounded-xl text-center border border-cyan-500/50 outline-none text-lg font-bold">
+                </div>
+                <div class="text-center">
+                    <label class="text-slate-600 text-[9px] font-bold block mb-2 uppercase">Champ 3</label>
+                    <input type="number" id="c3" value="2" oninput="calculate()" class="w-full bg-slate-800/40 text-white py-3 rounded-xl text-center border border-slate-800 outline-none text-lg font-bold">
+                </div>
+            </div>
+
+            <div class="h-px bg-slate-800 w-full"></div>
+
+            <div class="text-center py-2">
+                <div class="flex items-center justify-center gap-2 text-cyan-500 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    <span class="text-[10px] font-black uppercase tracking-[0.3em]">Heure Finale</span>
+                </div>
+                <div id="result" class="text-6xl font-mono font-bold text-cyan-400 glow-text tracking-tighter">--:--:--</div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4 text-[9px] text-slate-600 font-bold uppercase tracking-widest border-t border-slate-800/50">
+                <p>Pred Rapha © 2026</p>
+                <p class="text-cyan-800">Version 7.5.2</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-6 text-slate-500 text-xs font-bold tracking-[0.5em] uppercase opacity-50">
+        By Rapha
+    </div>
+
+    <script>
+        // Horloge temps réel
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.getHours().toString().padStart(2, '0') + ":" + 
+                               now.getMinutes().toString().padStart(2, '0') + ":" + 
+                               now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('live-clock').textContent = timeString;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Fametrahana ora default amin'ny heure de départ
+        window.onload = function() {
+            const ankehitriny = new Date();
+            const h = String(ankehitriny.getHours()).padStart(2, '0');
+            const m = String(ankehitriny.getMinutes()).padStart(2, '0');
+            const s = String(ankehitriny.getSeconds()).padStart(2, '0');
+            document.getElementById('start-time').value = `${h}:${m}:${s}`;
+        };
+
+        function checkPass() {
+            const val = document.getElementById('pass-input').value;
+            if(val === "") {
+                document.getElementById('login-screen').classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('main-app').classList.remove('hidden');
+                    calculate();
+                }, 300);
+            } else {
+                const err = document.getElementById('error-msg');
+                err.classList.remove('hidden');
+                document.getElementById('pass-input').value = "";
+            }
+        }
+
+        function calculate() {
+            try {
+                const startTime = document.getElementById('start-time').value;
+                const c1 = parseInt(document.getElementById('c1').value) || 0;
+                const c2 = document.getElementById('c2').value || "00";
+                const c3 = parseInt(document.getElementById('c3').value) || 0;
+
+                const parts = startTime.split(':');
+                let h = parseInt(parts[0]);
+                let m = parseInt(parts[1]);
+
+                let newM = m + (c1 - c3);
+
+                if(newM >= 60) { h += Math.floor(newM / 60); newM %= 60; }
+                while(newM < 0) { h--; newM += 60; }
+                
+                h = (h % 24 + 24) % 24;
+
+                const res = `${String(h).padStart(2,'0')}:${String(newM).padStart(2,'0')}:${String(c2).padStart(2,'0')}`;
+                document.getElementById('result').innerText = res;
+            } catch(e) {
+                document.getElementById('result').innerText = "ERROR";
+            }
+        }
+
+        document.getElementById('pass-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkPass();
+        });
+    </script>
+</body>
+</html>
